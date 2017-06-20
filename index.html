@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>WEB_SOCKET</title>
+</head>
+<body>
+<div class="field" id="head">
+    <span onsubmit="" class="">
+        <label for="url">URL</label>
+        <select id="protocol">
+            <option value="ws://">ws://</option>
+            <option value="wss://">wss://</option>
+        </select>
+        <input id="url" type="text">
+        <button id="connect">Connect</button>
+        <button id="disconnect">Disconnect</button>
+        <button id="save_url">Save</button>
+        <span class=""><label for="reconnect">Reconnect</label><input id="reconnect" type="checkbox"></span>
+        <label for="auto_msg">Auth</label><input id="auto_msg" type="text"><button id="auto_msg_save">Save</button>
+    </span>
+</div>
+
+
+<div class="field" id="textarea_field">
+    <span>
+        <label for="textarea">Запрос:</label><textarea id="textarea"></textarea>
+        <button id="send">Send</button>
+        <button id="clear_textarea">Clear</button>
+    </span>
+    <span>
+        <label for="pattern">Pattern</label>
+        <select id="pattern">
+            <option value="empty">empty</option>
+        </select>
+        <button id="delete_pattern">Delete</button>
+    </span>
+    <label for="pattern_name">Name</label><input id="pattern_name" type="text">
+    <button id="save_pattern">Save</button>
+</div>
+
+<div id="message">
+    <span><button id="clear_msg">Clear</button></span>
+    <span><label for="max_height">Max height</label><input value="500" id="max_height" type="text"></span>
+
+    <div id="_message_field" style="max-height: 480px">
+        <div id="message_field"></div>
+    </div>
+</div>
+
+<script src="jquery-3.2.1.min.js"></script>
+<script src="jquery.cookie.js"></script>
+<script src="ws.js"></script>
+</body>
+</html>
