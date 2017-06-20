@@ -126,7 +126,7 @@ $( document ).on( 'click', '#delete_pattern', function () {
     sel.remove();
     $.cookie( 'pattern', pattern, { 'path': '/', 'expires': new Date( '2997-06-14T17:26:13.980Z' ) } );
 } );
-$( document ).on( 'change, click', '#pattern', function () {
+$( document ).on( 'change', '#pattern', function () {
     if (this.value === 'empty'){
         return false;
     }
