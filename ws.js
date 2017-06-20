@@ -1,5 +1,3 @@
-// test
-
 var ws
     , CLOSE = false
     , $url = $( '#url' ).css( 'color', 'darkred' ).val( $.cookie( 'url' ) )
