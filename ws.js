@@ -34,12 +34,14 @@
 
 var storage = new (function ( nameTable ) {
     var i, _storageTable = {}
+        , _cookieCfg = { 'path': '/', 'expires': new Date( '2999-12-30T23:59:59.980Z' ) }
     ;
+
     try {
-        _storageTable = JSON.parse( localStorage.getItem( nameTable ) );
+        _storageTable = JSON.parse( $.cookie( nameTable ) );
     } catch ( e ) {
         console.error( e );
-        localStorage.setItem( 'storageTable', JSON.stringify( _storageTable ) );
+        $.cookie( 'storageTable', JSON.stringify( _storageTable ), _cookieCfg );
     }
     this.set = function ( name, val ) {
         if ( name === 'set' ) return;
@@ -47,22 +49,22 @@ var storage = new (function ( nameTable ) {
         if ( val === undefined ) {
             delete _storageTable[name];
             delete this[name];
-            localStorage.removeItem( name );
+            $.removeCookie( name );
         } else {
-            localStorage.setItem( name, JSON.stringify( val ) );
+            $.cookie( name, JSON.stringify( val ), _cookieCfg );
             _storageTable[name] = '';
             this[name] = val;
         }
 
         try {
-            localStorage.setItem( 'storageTable', JSON.stringify( _storageTable ) );
+            $.cookie( 'storageTable', JSON.stringify( _storageTable ), _cookieCfg );
         } catch ( e ) {
             console.error( e );
         }
     };
 
     for ( i in _storageTable ) {
-        this[i] = JSON.parse( localStorage.getItem( i ) );
+        this[i] = JSON.parse( $.cookie( i ) );
     }
 })( 'storageTable' );
 
@@ -78,7 +80,6 @@ var ws
     , $pattern = $( '#pattern' )
     , $patternName = $( '#pattern_name' )
     , $message_field = $( '#message_field' )
-    , cookieCfg = { 'path': '/', 'expires': new Date( '2999-12-30T23:59:59.980Z' ) }
 ;
 // '{"HashAuth":"1bcb953ddc497d3dfb81afa61f6d67a0b78aa4c7797329a5e9b6bac57aae32ad"}'
 // $url.val("ws://37.46.134.23:8080/ws" );
