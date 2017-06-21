@@ -101,9 +101,10 @@ function webSocket(url) {
 
     ws = new WebSocket(url);
     ws.onerror = function (e) {
-
+        console.error(e)
     };
     ws.onclose = function () {
+        console.error( "Сокеты упали" );
         $message_field.prepend('<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + 'Сокеты упали</div>');
         $url.css('color', 'darkred');
         if ($reconnect.is(":checked") && cfg.connectOpen) {
