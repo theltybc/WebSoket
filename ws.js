@@ -32,16 +32,21 @@
 //     }
 // })( 'storageTable' );
 
-var storage = new (function ( nameTable ) {
+var storage = new (function Storage( nameTable ) {
     var i, _storageTable = {}
         , _cookieCfg = { 'path': '/', 'expires': new Date( '2999-12-30T23:59:59.980Z' ) }
+        , fnGetSet
     ;
+    fnGetSet = function (context, name, get, set ) {
+        Object.defineProperty( this, name, {
+            get: get, set: set
+        } )
+    };
 
     try {
         _storageTable = JSON.parse( $.cookie( nameTable ) );
     } catch ( e ) {
-        console.error( e );
-        $.cookie( 'storageTable', JSON.stringify( _storageTable ), _cookieCfg );
+        $.cookie( nameTable, JSON.stringify( _storageTable ), _cookieCfg );
     }
     this.set = function ( name, val ) {
         if ( name === 'set' ) return;
@@ -57,16 +62,27 @@ var storage = new (function ( nameTable ) {
         }
 
         try {
-            $.cookie( 'storageTable', JSON.stringify( _storageTable ), _cookieCfg );
+            $.cookie( nameTable, JSON.stringify( _storageTable ), _cookieCfg );
         } catch ( e ) {
             console.error( e );
+        }
+        return this[name]
+    };
+    this.softSet = function ( name, val ) {
+        if ( !this[name] ) {
+            return this.set( name, val );
         }
     };
 
     for ( i in _storageTable ) {
         this[i] = JSON.parse( $.cookie( i ) );
     }
+
+
 })( 'storageTable' );
+// storage.name = 10;
+// console.log( 'storage.name', storage.name );
+
 
 var ws
     , CLOSE = false
