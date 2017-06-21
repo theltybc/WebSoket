@@ -1,34 +1,95 @@
+// var storage = new (function ( nameTable ) {
+//     var i, _storageTable = {}
+//     ;
+//     try {
+//         _storageTable = JSON.parse( localStorage.getItem( nameTable ) );
+//     } catch ( e ) {
+//         console.error( e );
+//         localStorage.setItem( 'storageTable', JSON.stringify( _storageTable ) );
+//     }
+//     this.set = function ( name, val ) {
+//         if ( name === 'set' ) return;
+//
+//         if ( val === undefined ) {
+//             delete _storageTable[name];
+//             delete this[name];
+//             localStorage.removeItem( name );
+//         } else {
+//             localStorage.setItem( name, JSON.stringify( val ) );
+//             _storageTable[name] = '';
+//             this[name] = val;
+//         }
+//
+//         try {
+//             localStorage.setItem( 'storageTable', JSON.stringify( _storageTable ) );
+//         } catch ( e ) {
+//             console.error( e );
+//         }
+//     };
+//
+//     for ( i in _storageTable ) {
+//         this[i] = JSON.parse( localStorage.getItem( i ) );
+//     }
+// })( 'storageTable' );
+
+var storage = new (function ( nameTable ) {
+    var i, _storageTable = {}
+    ;
+    try {
+        _storageTable = JSON.parse( localStorage.getItem( nameTable ) );
+    } catch ( e ) {
+        console.error( e );
+        localStorage.setItem( 'storageTable', JSON.stringify( _storageTable ) );
+    }
+    this.set = function ( name, val ) {
+        if ( name === 'set' ) return;
+
+        if ( val === undefined ) {
+            delete _storageTable[name];
+            delete this[name];
+            localStorage.removeItem( name );
+        } else {
+            localStorage.setItem( name, JSON.stringify( val ) );
+            _storageTable[name] = '';
+            this[name] = val;
+        }
+
+        try {
+            localStorage.setItem( 'storageTable', JSON.stringify( _storageTable ) );
+        } catch ( e ) {
+            console.error( e );
+        }
+    };
+
+    for ( i in _storageTable ) {
+        this[i] = JSON.parse( localStorage.getItem( i ) );
+    }
+})( 'storageTable' );
+
 var ws
     , CLOSE = false
-    , CFG = $.cookie( 'CFG' ) || {}
     , TIMEOUT_RECONNECT = 500
-    , $url = $( '#url' ).css( 'color', 'darkred' ).val( $.cookie( 'url' ) )
+    , $url = $( '#url' ).css( 'color', 'darkred' ).val( storage.url )
     , $reconnect = $( "#reconnect" )
-    , $textarea = $( '#textarea' ).val( $.cookie( 'textarea' ) )
-    , $autoMsg = $( '#auto_msg' ).val( $.cookie( 'auto_msg' ) )
+    , $textarea = $( '#textarea' )
+    , $autoMsg = $( '#auto_msg' ).val( storage.auto_msg )
     , delBTN = '<button class="del">X</button>'
-    , pattern = $.cookie( 'pattern' )
+    , pattern = storage.pattern
     , $pattern = $( '#pattern' )
     , $patternName = $( '#pattern_name' )
     , $message_field = $( '#message_field' )
-    , cookieCfg = { 'path': '/', 'expires': new Date( '2997-06-14T17:26:13.980Z' ) }
+    , cookieCfg = { 'path': '/', 'expires': new Date( '2999-12-30T23:59:59.980Z' ) }
 ;
 // '{"HashAuth":"1bcb953ddc497d3dfb81afa61f6d67a0b78aa4c7797329a5e9b6bac57aae32ad"}'
 // $url.val("ws://37.46.134.23:8080/ws" );
 
 (function () {
-    try {
-        pattern = JSON.parse( pattern );
-    } catch ( e ) {
-        console.log( 'pattern', pattern );
-        return
-    }
     var i, el = '';
     for ( i in pattern ) {
         el += makePattern( i )
     }
 
-    if ( $.cookie( 'reconnect' ) === 'true' ) {
+    if ( storage.reconnect ) {
         $reconnect.prop( 'checked', true )
     }
 
@@ -94,10 +155,10 @@ $( document ).on( 'keyup', '#url', function ( ev ) {
 $( document ).on( 'click', '#disconnect', function () {
     CLOSE = true;
     ws.close();
-    $.cookie( 'disconnect', 'true' )
+    storage.set( 'disconnect', true, true )
 } );
 $( document ).on( 'click', '#save_url', function () {
-    $.cookie( 'url', $url.val(), cookieCfg )
+    storage.set( 'url', $url.val() )
 } );
 
 
@@ -120,7 +181,7 @@ $( document ).on( 'click', '#save_pattern', function () {
         return;
     }
     pattern[name] = text;
-    $.cookie( 'pattern', JSON.stringify( pattern ), cookieCfg );
+    storage.set( 'pattern', pattern );
     if ( notExist ) {
         makePattern( name )
     }
@@ -134,7 +195,7 @@ $( document ).on( 'click', '#delete_pattern', function () {
     }
     delete pattern[name];
     sel.remove();
-    $.cookie( 'pattern', JSON.stringify( pattern ), cookieCfg );
+    storage.set( 'pattern', pattern );
 } );
 $( document ).on( 'change', '#pattern', function () {
     if ( this.value === 'empty' ) {
@@ -163,13 +224,13 @@ $( document ).on( 'click', '.del', function () {
 
 
 $( document ).on( 'click', '#auto_msg_save', function () {
-    $.cookie( 'auto_msg', $autoMsg.val(), cookieCfg )
+    storage.set( 'auto_msg', $autoMsg.val() )
 } );
 
 $( document ).on( 'change', '#reconnect', function () {
     if ( $( this ).is( ":checked" ) ) {
-        $.cookie( 'reconnect', 'true', cookieCfg )
+        storage.set( 'reconnect', true );
     } else {
-        $.cookie( 'reconnect', 'false', cookieCfg )
+        storage.set( 'reconnect', false )
     }
 } );
