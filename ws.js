@@ -1,6 +1,9 @@
 var ws
     , CLOSE = false
+    , CFG = $.cookie( 'CFG' ) || {}
+    , TIMEOUT_RECONNECT = 500
     , $url = $( '#url' ).css( 'color', 'darkred' ).val( $.cookie( 'url' ) )
+    , $reconnect = $( "#reconnect" )
     , $textarea = $( '#textarea' ).val( $.cookie( 'textarea' ) )
     , $autoMsg = $( '#auto_msg' ).val( $.cookie( 'auto_msg' ) )
     , delBTN = '<button class="del">X</button>'
@@ -12,6 +15,28 @@ var ws
 ;
 // '{"HashAuth":"1bcb953ddc497d3dfb81afa61f6d67a0b78aa4c7797329a5e9b6bac57aae32ad"}'
 // $url.val("ws://37.46.134.23:8080/ws" );
+
+(function () {
+    try {
+        pattern = JSON.parse( pattern );
+    } catch ( e ) {
+        console.log( 'pattern', pattern );
+        return
+    }
+    var i, el = '';
+    for ( i in pattern ) {
+        el += makePattern( i )
+    }
+
+    if ( $.cookie( 'reconnect' ) === 'true' ) {
+        $reconnect.prop( 'checked', true )
+    }
+
+    // if ( )
+})();
+function makePattern( i ) {
+    $pattern.append( '<option value="' + i + '">' + i + '</option>' );
+}
 
 function webSocket( url ) {
     CLOSE = false;
@@ -25,8 +50,8 @@ function webSocket( url ) {
     ws.onclose = function () {
         $message_field.prepend( '<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + 'Сокеты упали</div>' );
         $url.css( 'color', 'darkred' );
-        if ( $( "#reconnect" ).is( ":checked" ) && !CLOSE ) {
-            setTimeout( webSocket, 5000 );
+        if ( $reconnect.is( ":checked" ) && !CLOSE ) {
+            setTimeout( webSocket, TIMEOUT_RECONNECT );
         }
     };
     ws.onmessage = function ( msg ) {
@@ -69,6 +94,7 @@ $( document ).on( 'keyup', '#url', function ( ev ) {
 $( document ).on( 'click', '#disconnect', function () {
     CLOSE = true;
     ws.close();
+    $.cookie( 'disconnect', 'true' )
 } );
 $( document ).on( 'click', '#save_url', function () {
     $.cookie( 'url', $url.val(), cookieCfg )
@@ -85,21 +111,6 @@ $( document ).on( 'click', '#send', function () {
 } );
 
 
-(function () {
-    try {
-        pattern = JSON.parse( pattern );
-    } catch ( e ) {
-        console.log( 'pattern', pattern );
-        return
-    }
-    var i, el = '';
-    for ( i in pattern ) {
-        el += makePattern( i )
-    }
-})();
-function makePattern( i ) {
-    $pattern.append( '<option value="' + i + '">' + i + '</option>' );
-}
 $( document ).on( 'click', '#save_pattern', function () {
     if ( typeof pattern !== "object" ) {
         pattern = {};
@@ -155,3 +166,10 @@ $( document ).on( 'click', '#auto_msg_save', function () {
     $.cookie( 'auto_msg', $autoMsg.val(), cookieCfg )
 } );
 
+$( document ).on( 'change', '#reconnect', function () {
+    if ( $( this ).is( ":checked" ) ) {
+        $.cookie( 'reconnect', 'true', cookieCfg )
+    } else {
+        $.cookie( 'reconnect', 'false', cookieCfg )
+    }
+} );
