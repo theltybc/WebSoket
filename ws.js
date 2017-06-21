@@ -7,6 +7,8 @@ var ws
     , pattern = $.cookie( 'pattern' )
     , $pattern = $( '#pattern' )
     , $patternName = $( '#pattern_name' )
+    , $message_field = $( '#message_field' )
+    , cookieCfg = { 'path': '/', 'expires': new Date( '2997-06-14T17:26:13.980Z' ) }
 ;
 // '{"HashAuth":"1bcb953ddc497d3dfb81afa61f6d67a0b78aa4c7797329a5e9b6bac57aae32ad"}'
 // $url.val("ws://37.46.134.23:8080/ws" );
@@ -21,6 +23,7 @@ function webSocket( url ) {
 
     };
     ws.onclose = function () {
+        $message_field.prepend( '<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + 'Сокеты упали</div>' );
         $url.css( 'color', 'darkred' );
         if ( $( "#reconnect" ).is( ":checked" ) && !CLOSE ) {
             setTimeout( webSocket, 5000 );
@@ -28,7 +31,7 @@ function webSocket( url ) {
     };
     ws.onmessage = function ( msg ) {
         console.log( 'msg', msg );
-        $( '#message_field' ).prepend( '<div class="msg in" >' + delBTN + msg.data + '</div>' )
+        $message_field.prepend( '<div class="msg in" >' + delBTN + msg.data + '</div>' )
     };
     ws.onopen = function () {
         ws.send = (function ( x ) {
@@ -48,9 +51,9 @@ function send( msg ) {
     msg = msg || $textarea.val();
     try {
         ws.send( msg );
-        $( '#message_field' ).prepend( '<div class="msg send" >' + delBTN + msg + '</div>' )
+        $message_field.prepend( '<div class="msg send" >' + delBTN + msg + '</div>' )
     } catch ( e ) {
-        $( '#message_field' ).prepend( '<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + e + '</div>' )
+        $message_field.prepend( '<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + e + '</div>' )
     }
 }
 
@@ -68,7 +71,7 @@ $( document ).on( 'click', '#disconnect', function () {
     ws.close();
 } );
 $( document ).on( 'click', '#save_url', function () {
-    $.cookie( 'url', $url.val(), { 'path': '/', 'expires': new Date( '2997-06-14T17:26:13.980Z' ) } )
+    $.cookie( 'url', $url.val(), cookieCfg )
 } );
 
 
@@ -80,7 +83,6 @@ $( document ).on( 'keyup', '#textarea', function ( ev ) {
 $( document ).on( 'click', '#send', function () {
     send();
 } );
-
 
 
 (function () {
@@ -107,15 +109,12 @@ $( document ).on( 'click', '#save_pattern', function () {
         return;
     }
     pattern[name] = text;
-    $.cookie( 'pattern', JSON.stringify( pattern ), {
-        'path': '/',
-        'expires': new Date( '2997-06-14T17:26:13.980Z' )
-    } );
+    $.cookie( 'pattern', JSON.stringify( pattern ), cookieCfg );
     if ( notExist ) {
         makePattern( name )
     }
-    $patternName.val('');
-    $pattern.val(name)
+    $patternName.val( '' );
+    $pattern.val( name )
 } );
 $( document ).on( 'click', '#delete_pattern', function () {
     var sel = $pattern.find( 'option:checked' ), name = $pattern.val();
@@ -124,10 +123,10 @@ $( document ).on( 'click', '#delete_pattern', function () {
     }
     delete pattern[name];
     sel.remove();
-    $.cookie( 'pattern', pattern, { 'path': '/', 'expires': new Date( '2997-06-14T17:26:13.980Z' ) } );
+    $.cookie( 'pattern', JSON.stringify( pattern ), cookieCfg );
 } );
 $( document ).on( 'change', '#pattern', function () {
-    if (this.value === 'empty'){
+    if ( this.value === 'empty' ) {
         return false;
     }
     $textarea.val( pattern[this.value] );
@@ -141,10 +140,10 @@ $( document ).on( 'click', '#clear_textarea', function () {
 
 
 $( document ).on( 'click', '#clear_msg', function () {
-    $( '#message_field' ).empty();
+    $message_field.empty();
 } );
 $( document ).on( 'change', '#height', function () {
-    $( '#message_field' ).css( 'max-height', this.value );
+    $message_field.css( 'max-height', this.value );
     $( '#_message_field' ).css( 'max-height', +this.value - 19 );
 } );
 $( document ).on( 'click', '.del', function () {
@@ -153,6 +152,6 @@ $( document ).on( 'click', '.del', function () {
 
 
 $( document ).on( 'click', '#auto_msg_save', function () {
-    $.cookie( 'auto_msg', $autoMsg.val(), { 'path': '/', 'expires': new Date( '2997-06-14T17:26:13.980Z' ) } )
+    $.cookie( 'auto_msg', $autoMsg.val(), cookieCfg )
 } );
 
