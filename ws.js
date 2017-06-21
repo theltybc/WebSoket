@@ -1,253 +1,233 @@
-// var storage = new (function ( nameTable ) {
-//     var i, _storageTable = {}
-//     ;
-//     try {
-//         _storageTable = JSON.parse( localStorage.getItem( nameTable ) );
-//     } catch ( e ) {
-//         console.error( e );
-//         localStorage.setItem( 'storageTable', JSON.stringify( _storageTable ) );
-//     }
-//     this.set = function ( name, val ) {
-//         if ( name === 'set' ) return;
-//
-//         if ( val === undefined ) {
-//             delete _storageTable[name];
-//             delete this[name];
-//             localStorage.removeItem( name );
-//         } else {
-//             localStorage.setItem( name, JSON.stringify( val ) );
-//             _storageTable[name] = '';
-//             this[name] = val;
-//         }
-//
-//         try {
-//             localStorage.setItem( 'storageTable', JSON.stringify( _storageTable ) );
-//         } catch ( e ) {
-//             console.error( e );
-//         }
-//     };
-//
-//     for ( i in _storageTable ) {
-//         this[i] = JSON.parse( localStorage.getItem( i ) );
-//     }
-// })( 'storageTable' );
+function Storage(nameTable) {
+    var name
+        , _cookieCfg = {'path': '/', 'expires': new Date('2999-12-30T23:59:59.980Z')};
 
-var storage = new (function Storage( nameTable ) {
-    var i, _storageTable = {}
-        , _cookieCfg = { 'path': '/', 'expires': new Date( '2999-12-30T23:59:59.980Z' ) }
-        , fnGetSet
-    ;
-    fnGetSet = function (context, name, get, set ) {
-        Object.defineProperty( this, name, {
-            get: get, set: set
-        } )
-    };
-
+    this.table = {};
     try {
-        _storageTable = JSON.parse( $.cookie( nameTable ) );
-    } catch ( e ) {
-        $.cookie( nameTable, JSON.stringify( _storageTable ), _cookieCfg );
+        this.table = JSON.parse($.cookie(nameTable));
+    } catch (e) {
+        $.cookie(nameTable, JSON.stringify(this.table), _cookieCfg);
     }
-    this.set = function ( name, val ) {
-        if ( name === 'set' ) return;
-
-        if ( val === undefined ) {
-            delete _storageTable[name];
-            delete this[name];
-            $.removeCookie( name );
-        } else {
-            $.cookie( name, JSON.stringify( val ), _cookieCfg );
-            _storageTable[name] = '';
+    this.set = function (name, val) {
+        if (val !== undefined) {
+            this.table[name] = nameTable + '_' + name;
+            $.cookie(this.table[name], JSON.stringify(val), _cookieCfg);
             this[name] = val;
+            try {
+                $.cookie(nameTable, JSON.stringify(this.table), _cookieCfg);
+            } catch (e) {
+                console.error(e);
+            }
+            return this[name]
         }
 
+    };
+    this.del = function (name) {
+        delete this.table[name];
+        delete this[name];
+        $.removeCookie(this.table[name]);
         try {
-            $.cookie( nameTable, JSON.stringify( _storageTable ), _cookieCfg );
-        } catch ( e ) {
-            console.error( e );
-        }
-        return this[name]
-    };
-    this.softSet = function ( name, val ) {
-        if ( !this[name] ) {
-            return this.set( name, val );
+            $.cookie(nameTable, JSON.stringify(this.table), _cookieCfg);
+        } catch (e) {
+            console.error(e);
         }
     };
 
-    for ( i in _storageTable ) {
-        this[i] = JSON.parse( $.cookie( i ) );
+    this.softSet = function (name, val) {
+        if (!this[name]) {
+            return this.set(name, val);
+        }
+    };
+
+    for (name in this.table) {
+        try {
+            this[name] = JSON.parse($.cookie(this.table[name]));
+        } catch (e) {
+            console.error(e);
+            delete this.table[name];
+            $.cookie(nameTable, JSON.stringify(this.table), _cookieCfg)
+        }
     }
+}
 
-
-})( 'storageTable' );
-// storage.name = 10;
-// console.log( 'storage.name', storage.name );
-
-
-var ws
-    , CLOSE = false
+var storage = new Storage('storageTable')
+    , storagePattern = new Storage('storagePatternTable')
+    , cfg = new Storage('cfgTable')
+    , ws
     , TIMEOUT_RECONNECT = 500
-    , $url = $( '#url' ).css( 'color', 'darkred' ).val( storage.url )
-    , $reconnect = $( "#reconnect" )
-    , $textarea = $( '#textarea' )
-    , $autoMsg = $( '#auto_msg' ).val( storage.auto_msg )
+    , $url = $('#url').css('color', 'darkred').val(storage.url)
+    , $reconnect = $("#reconnect")
+    , $textarea = $('#textarea')
+    , $autoMsg = $('#auto_msg').val(storage.auto_msg)
     , delBTN = '<button class="del">X</button>'
-    , pattern = storage.pattern
-    , $pattern = $( '#pattern' )
-    , $patternName = $( '#pattern_name' )
-    , $message_field = $( '#message_field' )
+    , $pattern = $('#pattern')
+    , $patternName = $('#pattern_name')
+    , $message_field = $('#message_field')
+    , $msgFieldMaxHeight = $('#msg_field_max_height')
+    , msgFieldHeightLimit = 2000
 ;
 // '{"HashAuth":"1bcb953ddc497d3dfb81afa61f6d67a0b78aa4c7797329a5e9b6bac57aae32ad"}'
 // $url.val("ws://37.46.134.23:8080/ws" );
 
 (function () {
     var i, el = '';
-    for ( i in pattern ) {
-        el += makePattern( i )
+    for (i in storagePattern.table) if (i !== 'set') {
+        el += makePattern(i)
     }
 
-    if ( storage.reconnect ) {
-        $reconnect.prop( 'checked', true )
+    if (cfg.reconnect) {
+        $reconnect.prop('checked', true);
+        if (cfg.connectOpen) {
+            webSocket();
+        }
+    }
+    if (cfg.selectPattern) {
+        $pattern.val(cfg.selectPattern);
+        changePattern();
+    }
+    if (cfg.msgFieldHeight) {
+        $msgFieldMaxHeight.val(cfg.msgFieldHeight);
+        changeSize();
     }
 
-    // if ( )
+
 })();
-function makePattern( i ) {
-    $pattern.append( '<option value="' + i + '">' + i + '</option>' );
+function makePattern(i) {
+    $pattern.append('<option value="' + i + '">' + i + '</option>');
 }
 
-function webSocket( url ) {
-    CLOSE = false;
+function webSocket(url) {
+    url = $('#protocol').val() + (url || $url.val());
 
-    url = $( '#protocol' ).val() + (url || $url.val());
-
-    ws = new WebSocket( url );
-    ws.onerror = function ( e ) {
+    ws = new WebSocket(url);
+    ws.onerror = function (e) {
 
     };
     ws.onclose = function () {
-        $message_field.prepend( '<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + 'Сокеты упали</div>' );
-        $url.css( 'color', 'darkred' );
-        if ( $reconnect.is( ":checked" ) && !CLOSE ) {
-            setTimeout( webSocket, TIMEOUT_RECONNECT );
+        $message_field.prepend('<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + 'Сокеты упали</div>');
+        $url.css('color', 'darkred');
+        if ($reconnect.is(":checked") && cfg.connectOpen) {
+            cfg.set('connectOpen', true);
+            setTimeout(webSocket, TIMEOUT_RECONNECT);
         }
     };
-    ws.onmessage = function ( msg ) {
-        console.log( 'msg', msg );
-        $message_field.prepend( '<div class="msg in" >' + delBTN + msg.data + '</div>' )
+    ws.onmessage = function (msg) {
+        console.log('msg', msg);
+        $message_field.prepend('<div class="msg in" >' + delBTN + msg.data + '</div>')
     };
     ws.onopen = function () {
-        ws.send = (function ( x ) {
+        cfg.set('connectOpen', true);
+        ws.send = (function (x) {
             return function () {
-                console.log( 'SEND', arguments[0] );
-                x.apply( ws, arguments )
+                console.log('SEND', arguments[0]);
+                x.apply(ws, arguments)
             }
-        })( ws.send );
-        if ( $autoMsg.val() !== '' ) {
-            send( $autoMsg.val() );
+        })(ws.send);
+        if ($autoMsg.val() !== '') {
+            send($autoMsg.val());
         }
-        $url.css( 'color', '#1d6e1d' )
+        $url.css('color', '#1d6e1d')
     };
 }
 
-function send( msg ) {
+function send(msg) {
     msg = msg || $textarea.val();
     try {
-        ws.send( msg );
-        $message_field.prepend( '<div class="msg send" >' + delBTN + msg + '</div>' )
-    } catch ( e ) {
-        $message_field.prepend( '<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + e + '</div>' )
+        ws.send(msg);
+        $message_field.prepend('<div class="msg send" >' + delBTN + msg + '</div>')
+    } catch (e) {
+        $message_field.prepend('<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + e + '</div>')
     }
 }
 
 
-$( document ).on( 'click', '#connect', function () {
+$(document).on('click', '#connect', function () {
     webSocket();
-} );
-$( document ).on( 'keyup', '#url', function ( ev ) {
-    if ( ev.keyCode === 13 ) {
+});
+$(document).on('keyup', '#url', function (ev) {
+    if (ev.keyCode === 13) {
         webSocket();
     }
-} );
-$( document ).on( 'click', '#disconnect', function () {
-    CLOSE = true;
+});
+$(document).on('click', '#disconnect', function () {
+    cfg.set('connectOpen', false);
     ws.close();
-    storage.set( 'disconnect', true, true )
-} );
-$( document ).on( 'click', '#save_url', function () {
-    storage.set( 'url', $url.val() )
-} );
+});
+$(document).on('click', '#save_url', function () {
+    storage.set('url', $url.val())
+});
 
 
-$( document ).on( 'keyup', '#textarea', function ( ev ) {
-    if ( ev.keyCode === 13 ) {
+$(document).on('keyup', '#textarea', function (ev) {
+    if (ev.keyCode === 13) {
         send();
     }
-} );
-$( document ).on( 'click', '#send', function () {
+});
+$(document).on('click', '#send', function () {
     send();
-} );
+});
 
 
-$( document ).on( 'click', '#save_pattern', function () {
-    if ( typeof pattern !== "object" ) {
-        pattern = {};
-    }
-    var name = $patternName.val(), text = $textarea.val(), notExist = !pattern[name];
-    if ( name === '' || text === '' ) {
+$(document).on('click', '#save_pattern', function () {
+    var name = $patternName.val(), text = $textarea.val(), notExist = !storagePattern[name];
+    if (name === '' || text === '') {
         return;
     }
-    pattern[name] = text;
-    storage.set( 'pattern', pattern );
-    if ( notExist ) {
-        makePattern( name )
+    storagePattern.set(name, text);
+    if (notExist) {
+        makePattern(name)
     }
-    $patternName.val( '' );
-    $pattern.val( name )
-} );
-$( document ).on( 'click', '#delete_pattern', function () {
-    var sel = $pattern.find( 'option:checked' ), name = $pattern.val();
-    if ( name === 'empty' ) {
+    $patternName.val('');
+    $pattern.val(name)
+});
+$(document).on('click', '#delete_pattern', function () {
+    var sel = $pattern.find('option:checked'), name = $pattern.val();
+    if (name === 'empty') {
         return;
     }
-    delete pattern[name];
+    storagePattern.del(name);
     sel.remove();
-    storage.set( 'pattern', pattern );
-} );
-$( document ).on( 'change', '#pattern', function () {
-    if ( this.value === 'empty' ) {
+});
+function changePattern() {
+    var val = $pattern.val();
+    cfg.set('selectPattern', val);
+    if (val === 'empty') {
         return false;
     }
-    $textarea.val( pattern[this.value] );
+    $textarea.val(storagePattern[val]);
     return false;
-} );
+}
+$(document).on('change', '#pattern', changePattern);
 
 
-$( document ).on( 'click', '#clear_textarea', function () {
-    $textarea.val( '' );
-} );
+$(document).on('click', '#clear_textarea', function () {
+    $textarea.val('');
+});
 
 
-$( document ).on( 'click', '#clear_msg', function () {
+$(document).on('click', '#clear_msg', function () {
     $message_field.empty();
-} );
-$( document ).on( 'change', '#height', function () {
-    $message_field.css( 'max-height', this.value );
-    $( '#_message_field' ).css( 'max-height', +this.value - 19 );
-} );
-$( document ).on( 'click', '.del', function () {
-    $( this.parentNode ).remove();
-} );
-
-
-$( document ).on( 'click', '#auto_msg_save', function () {
-    storage.set( 'auto_msg', $autoMsg.val() )
-} );
-
-$( document ).on( 'change', '#reconnect', function () {
-    if ( $( this ).is( ":checked" ) ) {
-        storage.set( 'reconnect', true );
-    } else {
-        storage.set( 'reconnect', false )
+});
+function changeSize() {
+    var size = +($msgFieldMaxHeight.val());
+    if (size > msgFieldHeightLimit) {
+        $msgFieldMaxHeight.val(500);
+        return;
     }
-} );
+    cfg.set('msgFieldHeight', size);
+    $message_field.css('max-height', size);
+    $('#_message_field').css('max-height', size - 19);
+}
+$(document).on('change', '#msg_field_max_height', changeSize);
+$(document).on('click', '.del', function () {
+    $(this.parentNode).remove();
+});
+
+
+$(document).on('click', '#auto_msg_save', function () {
+    storage.set('auto_msg', $autoMsg.val())
+});
+
+$(document).on('change', '#reconnect', function () {
+    cfg.set('reconnect', $(this).is(":checked"));
+});
