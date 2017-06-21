@@ -217,6 +217,7 @@ function changeSize() {
     cfg.set('msgFieldHeight', size);
     $message_field.css('max-height', size);
     $('#_message_field').css('max-height', size - 19);
+    $('#message').css('max-height', size + 32);
 }
 $(document).on('change', '#msg_field_max_height', changeSize);
 $(document).on('click', '.del', function () {
