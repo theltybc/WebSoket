@@ -126,37 +126,30 @@ function webSocket(url) {
     ws.onopen = function () {
         cfg.set('connectOpen', true);
         ws.send = (function (x) {
-            return function () {
+            return function (msg) {
+                msg = msg || $textarea.val();
                 console.group("%cMSG SEND::::>>>>", 'color: blue');
-                console.log(arguments[0]);
+                console.log(msg);
                 try {
-                    console.log(JSON.parse(arguments[0]));
+                    console.log(JSON.parse(msg));
                 } catch (e) {
                     console.error(e);
                 }
                 console.groupEnd();
                 try {
                     x.apply(ws, arguments);
+                    $message_field.prepend('<div class="msg send" >' + delBTN + msg + '</div>')
                 } catch (e) {
+                    $message_field.prepend('<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + e + '</div>')
                     console.error(e);
                 }
             }
         })(ws.send);
         if ($autoMsg.val() !== '') {
-            send($autoMsg.val());
+            ws.send($autoMsg.val());
         }
         $url.css('color', '#1d6e1d')
     };
-}
-
-function send(msg) {
-    msg = msg || $textarea.val();
-    try {
-        ws.send(msg);
-        $message_field.prepend('<div class="msg send" >' + delBTN + msg + '</div>')
-    } catch (e) {
-        $message_field.prepend('<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + e + '</div>')
-    }
 }
 
 
@@ -179,11 +172,11 @@ $(document).on('click', '#save_url', function () {
 
 $(document).on('keyup', '#textarea', function (ev) {
     if (ev.keyCode === 13) {
-        send();
+        ws.send();
     }
 });
 $(document).on('click', '#send', function () {
-    send();
+    ws.send();
 });
 
 
