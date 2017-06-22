@@ -137,10 +137,10 @@ function webSocket(url) {
                 }
                 console.groupEnd();
                 try {
-                    x.apply(ws, arguments);
+                    x.call(ws, msg);
                     $message_field.prepend('<div class="msg send" >' + delBTN + msg + '</div>')
                 } catch (e) {
-                    $message_field.prepend('<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + e + '</div>')
+                    $message_field.prepend('<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + e + '</div>');
                     console.error(e);
                 }
             }
