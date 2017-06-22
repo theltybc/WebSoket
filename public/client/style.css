@@ -40,7 +40,7 @@ span {
 }
 
 .in {
-    background-color: #c3d3f7;
+    background-color: #c8d8fc;
     margin-bottom: 5px;
 }
 
@@ -76,8 +76,8 @@ span {
 }
 
 .del {
-    background-color: darkred;
-    color: white;
+    background-color: #ebeead;
+    color: #000000;
     border-radius: 6px;
 }
 #pattern {

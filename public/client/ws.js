@@ -59,7 +59,6 @@ var storage = new Storage('storageTable')
     , $reconnect = $("#reconnect")
     , $textarea = $('#textarea')
     , $autoMsg = $('#auto_msg').val(storage.auto_msg)
-    , delBTN = '<button class="del">X</button>'
     , $pattern = $('#pattern')
     , $patternName = $('#pattern_name')
     , $message_field = $('#message_field')
@@ -77,9 +76,9 @@ var storage = new Storage('storageTable')
 
     if (cfg.reconnect) {
         $reconnect.prop('checked', true);
-        if (cfg.connectOpen) {
-            webSocket();
-        }
+    }
+    if (cfg.connectOpen) {
+        webSocket();
     }
     if (cfg.selectPattern) {
         $pattern.val(cfg.selectPattern);
@@ -95,9 +94,20 @@ var storage = new Storage('storageTable')
 function makePattern(i) {
     $pattern.append('<option value="' + i + '">' + i + '</option>');
 }
+function showMsg(cl, msg, error, errorParse) {
+    var el = $('<div class="msg" ><button class="del">X</button> ' + msg + '</div>');
+    el.addClass(cl);
+    if (error) {
+        el.css('background-color', 'darkred').css('color', '#f3fdff');
+    } else if (errorParse) {
+        el.css('color', '#000e3a')
+    }
+    $message_field.prepend(el);
+}
 
 function webSocket(url) {
     url = $('#protocol').val() + (url || $url.val());
+    var errorParse = false;
 
     ws = new WebSocket(url);
     ws.onerror = function (e) {
@@ -105,7 +115,7 @@ function webSocket(url) {
     };
     ws.onclose = function () {
         console.error("Сокеты упали");
-        $message_field.prepend('<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + 'Сокеты упали</div>');
+        showMsg('send', 'Сокеты упали', true);
         $url.css('color', 'darkred');
         if ($reconnect.is(":checked") && cfg.connectOpen) {
             cfg.set('connectOpen', true);
@@ -113,34 +123,38 @@ function webSocket(url) {
         }
     };
     ws.onmessage = function (msg) {
+        errorParse = false;
         console.group('%cMSG IN::::<<<<', 'color: green');
-        console.info(msg);
         try {
-            console.log(JSON.parse(msg.data));
+            console.info(JSON.parse(msg.data));
         } catch (e) {
+            errorParse = true;
+            console.info(msg.data);
             console.error(e);
         }
         console.groupEnd();
-        $message_field.prepend('<div class="msg in" >' + delBTN + msg.data + '</div>')
+        showMsg('in', msg.data, false, errorParse);
     };
     ws.onopen = function () {
         cfg.set('connectOpen', true);
         ws.send = (function (x) {
             return function (msg) {
+                errorParse = false;
                 msg = msg || $textarea.val();
                 console.group("%cMSG SEND::::>>>>", 'color: blue');
                 console.log(msg);
                 try {
                     console.log(JSON.parse(msg));
                 } catch (e) {
+                    errorParse = true;
                     console.error(e);
                 }
                 console.groupEnd();
                 try {
                     x.call(ws, msg);
-                    $message_field.prepend('<div class="msg send" >' + delBTN + msg + '</div>')
+                    showMsg('send', msg, false, errorParse);
                 } catch (e) {
-                    $message_field.prepend('<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + e + '</div>');
+                    showMsg('send', e, true);
                     console.error(e);
                 }
             }
