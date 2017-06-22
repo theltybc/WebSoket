@@ -100,7 +100,7 @@ function showMsg(cl, msg, error, errorParse) {
     if (error) {
         el.css('background-color', 'darkred').css('color', '#f3fdff');
     } else if (errorParse) {
-        el.css('color', '#000e3a')
+        el.css('color', '#000d30')
     }
     $message_field.prepend(el);
 }
@@ -141,6 +141,9 @@ function webSocket(url) {
             return function (msg) {
                 errorParse = false;
                 msg = msg || $textarea.val();
+                if (msg === '') {
+                    return;
+                }
                 console.group("%cMSG SEND::::>>>>", 'color: blue');
                 console.log(msg);
                 try {
