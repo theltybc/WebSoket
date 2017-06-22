@@ -1,5 +1,5 @@
 function Storage(nameTable) {
-    var name
+    var _name
         , _cookieCfg = {'path': '/', 'expires': new Date('2999-12-30T23:59:59.980Z')};
 
     this.table = {};
@@ -39,12 +39,12 @@ function Storage(nameTable) {
         }
     };
 
-    for (name in this.table) {
+    for (_name in this.table) {
         try {
-            this[name] = JSON.parse($.cookie(this.table[name]));
+            this[_name] = JSON.parse($.cookie(this.table[_name]));
         } catch (e) {
             console.error(e);
-            delete this.table[name];
+            delete this.table[_name];
             $.cookie(nameTable, JSON.stringify(this.table), _cookieCfg)
         }
     }
@@ -104,7 +104,7 @@ function webSocket(url) {
         console.error(e)
     };
     ws.onclose = function () {
-        console.error( "Сокеты упали" );
+        console.error("Сокеты упали");
         $message_field.prepend('<div style="background-color: darkred; color: #f3fdff" class="msg send" >' + delBTN + 'Сокеты упали</div>');
         $url.css('color', 'darkred');
         if ($reconnect.is(":checked") && cfg.connectOpen) {
@@ -113,15 +113,33 @@ function webSocket(url) {
         }
     };
     ws.onmessage = function (msg) {
-        console.log('msg', msg);
+        console.group('%cMSG IN::::<<<<', 'color: green');
+        console.info(msg);
+        try {
+            console.log(JSON.parse(msg.data));
+        } catch (e) {
+            console.error(e);
+        }
+        console.groupEnd();
         $message_field.prepend('<div class="msg in" >' + delBTN + msg.data + '</div>')
     };
     ws.onopen = function () {
         cfg.set('connectOpen', true);
         ws.send = (function (x) {
             return function () {
-                console.log('SEND', arguments[0]);
-                x.apply(ws, arguments)
+                console.group("%cMSG SEND::::>>>>", 'color: blue');
+                console.log(arguments[0]);
+                try {
+                    console.log(JSON.parse(arguments[0]));
+                } catch (e) {
+                    console.error(e);
+                }
+                console.groupEnd();
+                try {
+                    x.apply(ws, arguments);
+                } catch (e) {
+                    console.error(e);
+                }
             }
         })(ws.send);
         if ($autoMsg.val() !== '') {
