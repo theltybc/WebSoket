@@ -261,3 +261,5 @@ $(document).on('click', '#auto_msg_save', function () {
 $(document).on('change', '#reconnect', function () {
     cfg.set('reconnect', $(this).is(":checked"));
 });
+
+// var matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"));
