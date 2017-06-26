@@ -1,5 +1,5 @@
 function Storage(nameTable) {
-    var _name
+    let _name
         , _cookieCfg = {'path': '/', 'expires': new Date('2999-12-30T23:59:59.980Z')};
 
     this.table = {};
@@ -50,11 +50,12 @@ function Storage(nameTable) {
     }
 }
 
-var storage = new Storage('storageTable')
+let storage = new Storage('storageTable')
     , storagePattern = new Storage('storagePatternTable')
     , cfg = new Storage('cfgTable')
     , ws
-    , TIMEOUT_RECONNECT = 500
+;
+const TIMEOUT_RECONNECT = 500
     , $url = $('#url').css('color', 'darkred').val(storage.url)
     , $reconnect = $("#reconnect")
     , $textarea = $('#textarea')
@@ -69,7 +70,7 @@ var storage = new Storage('storageTable')
 // $url.val("ws://37.46.134.23:8080/ws" );
 
 (function () {
-    var i, el = '';
+    let i, el = '';
     for (i in storagePattern.table) if (i !== 'set') {
         el += makePattern(i)
     }
@@ -95,7 +96,7 @@ function makePattern(i) {
     $pattern.append('<option value="' + i + '">' + i + '</option>');
 }
 function showMsg(cl, msg, error, errorParse) {
-    var el = $('<div class="msg" ><button class="del">X</button> ' + msg + '</div>');
+    let el = $('<div class="msg" ><button class="del">X</button> ' + msg + '</div>');
     el.addClass(cl);
     if (error) {
         el.css('background-color', 'darkred').css('color', '#f3fdff');
@@ -107,7 +108,7 @@ function showMsg(cl, msg, error, errorParse) {
 
 function webSocket(url) {
     url = $('#protocol').val() + (url || $url.val());
-    var errorParse = false;
+    let errorParse = false;
 
     ws = new WebSocket(url);
     ws.onerror = function (e) {
@@ -198,7 +199,7 @@ $(document).on('click', '#send', function () {
 
 
 $(document).on('click', '#save_pattern', function () {
-    var name = $patternName.val(), text = $textarea.val(), notExist = !storagePattern[name];
+    let name = $patternName.val(), text = $textarea.val(), notExist = !storagePattern[name];
     if (name === '' || text === '') {
         return;
     }
@@ -210,7 +211,7 @@ $(document).on('click', '#save_pattern', function () {
     $pattern.val(name)
 });
 $(document).on('click', '#delete_pattern', function () {
-    var sel = $pattern.find('option:checked'), name = $pattern.val();
+    let sel = $pattern.find('option:checked'), name = $pattern.val();
     if (name === 'empty') {
         return;
     }
@@ -218,7 +219,7 @@ $(document).on('click', '#delete_pattern', function () {
     sel.remove();
 });
 function changePattern() {
-    var val = $pattern.val();
+    let val = $pattern.val();
     cfg.set('selectPattern', val);
     if (val === 'empty') {
         return false;
@@ -238,7 +239,7 @@ $(document).on('click', '#clear_msg', function () {
     $message_field.empty();
 });
 function changeSize() {
-    var size = +($msgFieldMaxHeight.val());
+    let size = +($msgFieldMaxHeight.val());
     if (size > msgFieldHeightLimit) {
         $msgFieldMaxHeight.val(500);
         return;
