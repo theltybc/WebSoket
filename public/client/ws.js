@@ -1,6 +1,5 @@
 function Storage(nameTable) {
-    let _name
-        , _cookieCfg = {'path': '/', 'expires': new Date('2999-12-30T23:59:59.980Z')};
+    const _cookieCfg = {'path': '/', 'expires': new Date('2999-12-30T23:59:59.980Z')};
 
     this.table = {};
     try {
@@ -39,7 +38,7 @@ function Storage(nameTable) {
         }
     };
 
-    for (_name in this.table) {
+    for (let _name in this.table) {
         try {
             this[_name] = JSON.parse($.cookie(this.table[_name]));
         } catch (e) {
@@ -56,10 +55,10 @@ let storage = new Storage('storageTable')
     , ws
 ;
 const TIMEOUT_RECONNECT = 500
-    , $url = $('#url').css('color', 'darkred').val(storage.url)
+    , $url = $('#url')
     , $reconnect = $("#reconnect")
     , $textarea = $('#textarea')
-    , $autoMsg = $('#auto_msg').val(storage.auto_msg)
+    , $autoMsg = $('#auto_msg')
     , $pattern = $('#pattern')
     , $patternName = $('#pattern_name')
     , $message_field = $('#message_field')
@@ -70,9 +69,11 @@ const TIMEOUT_RECONNECT = 500
 // $url.val("ws://37.46.134.23:8080/ws" );
 
 (function () {
-    let i, el = '';
-    for (i in storagePattern.table) if (i !== 'set') {
-        el += makePattern(i)
+    $url.css('color', 'darkred').val(storage.url);
+    $autoMsg.val(storage.auto_msg);
+
+    for (let i in storagePattern.table) {
+        appendPattern(i)
     }
 
     if (cfg.reconnect) {
@@ -89,11 +90,11 @@ const TIMEOUT_RECONNECT = 500
         $msgFieldMaxHeight.val(cfg.msgFieldHeight);
         changeSize();
     }
-
-
 })();
-function makePattern(i) {
-    $pattern.append('<option value="' + i + '">' + i + '</option>');
+
+
+function appendPattern(name) {
+    $pattern.append('<option value="' + name + '">' + name + '</option>');
 }
 function showMsg(cl, msg, error, errorParse) {
     let el = $('<div class="msg" ><button class="del">X</button> ' + msg + '</div>');
@@ -105,6 +106,7 @@ function showMsg(cl, msg, error, errorParse) {
     }
     $message_field.prepend(el);
 }
+
 
 function webSocket(url) {
     url = $('#protocol').val() + (url || $url.val());
@@ -205,7 +207,7 @@ $(document).on('click', '#save_pattern', function () {
     }
     storagePattern.set(name, text);
     if (notExist) {
-        makePattern(name)
+        appendPattern(name)
     }
     $patternName.val('');
     $pattern.val(name)
