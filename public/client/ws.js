@@ -3,17 +3,17 @@ function Storage(nameTable) {
 
     this.table = {};
     try {
-        this.table = JSON.parse($.cookie(nameTable));
+        this.table = JSON.parse(localStorage.getItem(nameTable)) || {};
     } catch (e) {
-        $.cookie(nameTable, JSON.stringify(this.table), _cookieCfg);
+        localStorage.setItem(nameTable, JSON.stringify(this.table));
     }
     this.set = function (name, val) {
         if (val !== undefined) {
             this.table[name] = nameTable + '_' + name;
-            $.cookie(this.table[name], JSON.stringify(val), _cookieCfg);
+            localStorage.setItem(this.table[name], JSON.stringify(val));
             this[name] = val;
             try {
-                $.cookie(nameTable, JSON.stringify(this.table), _cookieCfg);
+                localStorage.setItem(nameTable, JSON.stringify(this.table));
             } catch (e) {
                 console.error(e);
             }
@@ -26,7 +26,7 @@ function Storage(nameTable) {
         delete this[name];
         $.removeCookie(this.table[name]);
         try {
-            $.cookie(nameTable, JSON.stringify(this.table), _cookieCfg);
+            localStorage.setItem(nameTable, JSON.stringify(this.table));
         } catch (e) {
             console.error(e);
         }
@@ -40,11 +40,11 @@ function Storage(nameTable) {
 
     for (let _name in this.table) {
         try {
-            this[_name] = JSON.parse($.cookie(this.table[_name]));
+            this[_name] = JSON.parse(localStorage.getItem(this.table[_name]));
         } catch (e) {
             console.error(e);
             delete this.table[_name];
-            $.cookie(nameTable, JSON.stringify(this.table), _cookieCfg)
+            localStorage.setItem(nameTable, JSON.stringify(this.table))
         }
     }
 }
