@@ -102,7 +102,7 @@ function showMsg(cl, msg, error, errorParse) {
     if (error) {
         el.css('background-color', 'darkred').css('color', '#f3fdff');
     } else if (errorParse) {
-        el.css('color', '#001340')
+        el.css('color', '#001f7b')
     }
     $message_field.prepend(el);
 }
