@@ -58,7 +58,7 @@ const TIMEOUT_RECONNECT = 500
     , $autoMsg = $('#auto_msg')
     , $pattern = $('#pattern')
     , $patternName = $('#pattern_name')
-    , $message_field = $('#message_field')
+    , $messageField = $('#message_field')
     , $msgFieldMaxHeight = $('#msg_field_max_height')
     , msgFieldHeightLimit = 2000
 ;
@@ -67,7 +67,7 @@ const TIMEOUT_RECONNECT = 500
 
 (function () {
     $url.css('color', 'darkred').val(storage.url);
-    $autoMsg.val(storage.auto_msg);
+    $autoMsg.val(storage.autoMsg);
 
     for (let i in storagePattern.table) {
         appendPattern(i)
@@ -101,7 +101,7 @@ function showMsg(cl, msg, error, errorParse) {
     } else if (errorParse) {
         el.css('color', '#001f7b')
     }
-    $message_field.prepend(el);
+    $messageField.prepend(el);
 }
 
 
@@ -239,7 +239,7 @@ $(document).on('click', '#clear_textarea', function () {
 
 
 $(document).on('click', '#clear_msg', function () {
-    $message_field.empty();
+    $messageField.empty();
 });
 function changeSize() {
     let size = +($msgFieldMaxHeight.val());
@@ -248,7 +248,7 @@ function changeSize() {
         return;
     }
     cfg.set('msgFieldHeight', size);
-    $message_field.css('max-height', size);
+    $messageField.css('max-height', size);
     $('#_message_field').css('max-height', size - 19);
     $('#message').css('max-height', size + 32);
 }
