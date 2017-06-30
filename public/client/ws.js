@@ -1,6 +1,4 @@
 function Storage(nameTable) {
-    const _cookieCfg = {'path': '/', 'expires': new Date('2999-12-30T23:59:59.980Z')};
-
     this.table = {};
     try {
         this.table = JSON.parse(localStorage.getItem(nameTable)) || {};
@@ -19,7 +17,6 @@ function Storage(nameTable) {
             }
             return this[name]
         }
-
     };
     this.del = function (name) {
         delete this.table[name];
