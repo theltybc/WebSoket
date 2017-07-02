@@ -46,6 +46,18 @@ function Storage(nameTable) {
     }
 }
 
+
+function testExpression( con ) { // for test
+    let arr = Array.prototype.slice.call( arguments, 1 );
+    if ( con ) {
+        console.info( '%c\\\\\\\\\\\\', 'color: darkgreen', con, arr.join( ' ' ) );
+        // console.dir( _con + ' ' + arr.join( ' ' ), { colors: 'green' } );
+    } else {
+        console.error( '/////' + con, arr.join( ' ' ) );
+    }
+}
+
+
 let storage = new Storage('storageTable')
     , storagePattern = new Storage('storagePatternTable')
     , cfg = new Storage('cfgTable')
@@ -270,13 +282,3 @@ $(document).on('change', '#reconnect', function () {
 // var matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"));
 
 
-
-// function testExpression( con ) {
-//     let arr = Array.prototype.slice.call( arguments, 1 );
-//     if ( con ) {
-//         console.info( '%c\\\\\\\\\\\\', 'color: darkgreen', con, arr.join( ' ' ) );
-//         // console.dir( _con + ' ' + arr.join( ' ' ), { colors: 'green' } );
-//     } else {
-//         console.error( '/////' + con, arr.join( ' ' ) );
-//     }
-// }
