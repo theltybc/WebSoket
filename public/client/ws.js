@@ -47,15 +47,22 @@ function Storage(nameTable) {
 }
 
 
-function testExpression( con ) { // for test
-    let arr = Array.prototype.slice.call( arguments, 1 );
-    if ( con ) {
-        console.info( '%c\\\\\\\\\\\\', 'color: darkgreen', con, arr.join( ' ' ) );
+function testExpression(con) { // for test
+    let arr = Array.prototype.slice.call(arguments, 1);
+    if (con) {
+        console.info('%c\\\\\\\\\\\\', 'color: darkgreen', con, arr.join(' '));
         // console.dir( _con + ' ' + arr.join( ' ' ), { colors: 'green' } );
     } else {
-        console.error( '/////' + con, arr.join( ' ' ) );
+        console.error('/////' + con, arr.join(' '));
     }
 }
+
+
+function err(a,b,c,d,f) {
+    console.log('my error handler');
+    console.log(a,b,c,d,f);
+}
+window.onerror = err;
 
 
 let storage = new Storage('storageTable')
@@ -80,7 +87,8 @@ const TIMEOUT_RECONNECT = 500
 (function () {
     $url.css('color', 'darkred').val(storage.url);
     $autoMsg.val(storage.autoMsg);
-
+    let xx = 5 / 0;
+    console.log('x', x);
     for (let i in storagePattern.table) {
         appendPattern(i)
     }
