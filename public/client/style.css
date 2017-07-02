@@ -54,6 +54,7 @@ span {
     padding: 5px 5px 5px 5px;
     overflow-wrap: break-word;
 }
+
 #message {
     max-height: 500px;
     border: solid 1px black;
@@ -63,15 +64,16 @@ span {
 #_message_field {
     overflow-y: scroll;
 }
+
 #max_height {
     width: 80px;
 }
 
-.field button{
+.field button {
     margin-right: 5px;
 }
 
-#auto_msg{
+#auto_msg {
     width: 30%;
 }
 
@@ -80,6 +82,7 @@ span {
     color: #000000;
     border-radius: 6px;
 }
+
 #pattern {
     width: 30%;
 }

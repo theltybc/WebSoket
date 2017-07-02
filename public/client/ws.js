@@ -139,7 +139,7 @@ function webSocket(url) {
         cfg.set('connectOpen', true);
         ws.send = (function (x) {
             return function (msg) {
-                if (ws.readyState !== 1){
+                if (ws.readyState !== 1) {
                     showMsg('send', 'Не подключенны', true, false);
                     return;
                 }
@@ -262,8 +262,21 @@ $(document).on('click', '#auto_msg_save', function () {
     storage.set('auto_msg', $autoMsg.val())
 });
 
+
 $(document).on('change', '#reconnect', function () {
     cfg.set('reconnect', $(this).is(":checked"));
 });
 
 // var matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"));
+
+
+
+// function testExpression( con ) {
+//     let arr = Array.prototype.slice.call( arguments, 1 );
+//     if ( con ) {
+//         console.info( '%c\\\\\\\\\\\\', 'color: darkgreen', con, arr.join( ' ' ) );
+//         // console.dir( _con + ' ' + arr.join( ' ' ), { colors: 'green' } );
+//     } else {
+//         console.error( '/////' + con, arr.join( ' ' ) );
+//     }
+// }
