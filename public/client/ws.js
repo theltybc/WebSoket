@@ -87,8 +87,7 @@ const TIMEOUT_RECONNECT = 500
 (function () {
     $url.css('color', 'darkred').val(storage.url);
     $autoMsg.val(storage.autoMsg);
-    let xx = 5 / 0;
-    console.log('x', x);
+
     for (let i in storagePattern.table) {
         appendPattern(i)
     }
