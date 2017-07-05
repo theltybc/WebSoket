@@ -58,13 +58,6 @@ function testExpression(con) { // for test
 }
 
 
-function err(a,b,c,d,f) {
-    console.log('my error handler');
-    console.log(a,b,c,d,f);
-}
-window.onerror = err;
-
-
 let storage = new Storage('storageTable')
     , storagePattern = new Storage('storagePatternTable')
     , cfg = new Storage('cfgTable')
