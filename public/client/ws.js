@@ -278,7 +278,7 @@ $(document).on('click', '.del', function () {
 
 
 $(document).on('click', '#auto_msg_save', function () {
-    storage.set('auto_msg', $autoMsg.val())
+    storage.set('autoMsg', $autoMsg.val())
 });
 
 
