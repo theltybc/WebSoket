@@ -53,7 +53,7 @@ function showMsg(cl, msg, error, errorParse) {
     } else if (errorParse) {
         el.css('color', '#001f7b')
     } else {
-        el.find('.text_msg').before(' <button class="format">{}</button> ')
+        el.find('.text_msg').before(' <button class="format_msg_btn">{}</button> ')
     }
     $messageField.prepend(el);
 }
@@ -225,7 +225,7 @@ $(document).on('change', '#reconnect', function () {
 });
 
 
-$(document).on('click', '.format', function () {
+$(document).on('click', '.format_msg_btn', function () {
     let msg = this.parentNode.querySelector('.text_msg');
     if (msg.dataset.text_msg) {
         msg.innerHTML = msg.dataset.text_msg;
