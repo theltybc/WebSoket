@@ -282,3 +282,48 @@ $(document).on('change', '#reconnect', function () {
 // var matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"));
 
 
+function res(obj, tabs) {
+    let i, ii, result = [''];
+    if (tabs === undefined) {
+        tabs = '    '
+    } else {
+        tabs = tabs + '    ';
+    }
+    for (i in obj) {
+        ii = obj[i];
+        if (typeof ii === "object" && ii !== null) {
+            if (Array.isArray(ii)) {
+                result.push(tabs + i + ': ' + '[\n');
+            } else {
+                result.push(tabs + i + ': ' + '{\n');
+            }
+            result.push(res(ii, tabs)); // рекурсия
+
+            if (Array.isArray(ii)) {
+                result.push(tabs + '],\n');
+            } else {
+                result.push(tabs + '},\n');
+            }
+        } else {
+            result.push(tabs + i + ': ' + ii + ',\n');
+        }
+    }
+    return result.join('');
+}
+res({
+    "ID_msg": "x10009",
+    "Tables": [{
+        "Name": "ClientInfo",
+        "TypeParameter": "Insert",
+        "Values": [{
+            "Table": "ClientInfo",
+            "TypeParameter": "Phone",
+            "Query": "Create"
+        }, {
+            "Phone": "79097777777",
+            "Name": "TEST"
+        }]
+    }],
+    "Query": "Services",
+    "Error": null
+});
