@@ -53,6 +53,7 @@ span {
     border: solid 1px black;
     padding: 5px 5px 5px 5px;
     overflow-wrap: break-word;
+    word-break: break-all;
 }
 
 #message {
@@ -79,6 +80,11 @@ span {
 
 .del {
     background-color: #ebeead;
+    color: #000000;
+    border-radius: 6px;
+}
+.format {
+    background-color: rgba(61, 249, 0, 0.35);
     color: #000000;
     border-radius: 6px;
 }

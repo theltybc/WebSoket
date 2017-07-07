@@ -1,63 +1,3 @@
-function Storage(nameTable) {
-    this.table = {};
-    try {
-        this.table = JSON.parse(localStorage.getItem(nameTable)) || {};
-    } catch (e) {
-        localStorage.setItem(nameTable, JSON.stringify(this.table));
-    }
-    this.set = function (name, val) {
-        if (val !== undefined) {
-            this.table[name] = nameTable + '_' + name;
-            localStorage.setItem(this.table[name], JSON.stringify(val));
-            this[name] = val;
-            try {
-                localStorage.setItem(nameTable, JSON.stringify(this.table));
-            } catch (e) {
-                console.error(e);
-            }
-            return this[name]
-        }
-    };
-    this.del = function (name) {
-        delete this.table[name];
-        delete this[name];
-        $.removeCookie(this.table[name]);
-        try {
-            localStorage.setItem(nameTable, JSON.stringify(this.table));
-        } catch (e) {
-            console.error(e);
-        }
-    };
-
-    this.softSet = function (name, val) {
-        if (!this[name]) {
-            return this.set(name, val);
-        }
-    };
-
-    for (let _name in this.table) {
-        try {
-            this[_name] = JSON.parse(localStorage.getItem(this.table[_name]));
-        } catch (e) {
-            console.error(e);
-            delete this.table[_name];
-            localStorage.setItem(nameTable, JSON.stringify(this.table))
-        }
-    }
-}
-
-
-function testExpression(con) { // for test
-    let arr = Array.prototype.slice.call(arguments, 1);
-    if (con) {
-        console.info('%c\\\\\\\\\\\\', 'color: darkgreen', con, arr.join(' '));
-        // console.dir( _con + ' ' + arr.join( ' ' ), { colors: 'green' } );
-    } else {
-        console.error('/////' + con, arr.join(' '));
-    }
-}
-
-
 let storage = new Storage('storageTable')
     , storagePattern = new Storage('storagePatternTable')
     , cfg = new Storage('cfgTable')
@@ -106,12 +46,14 @@ function appendPattern(name) {
     $pattern.append('<option value="' + name + '">' + name + '</option>');
 }
 function showMsg(cl, msg, error, errorParse) {
-    let el = $('<div class="msg" ><button class="del">X</button> ' + msg + '</div>');
+    let el = $('<div class="msg" ><button class="del">X</button> <span class="text_msg" >' + msg + '</span> </div>');
     el.addClass(cl);
     if (error) {
         el.css('background-color', 'darkred').css('color', '#f3fdff');
     } else if (errorParse) {
         el.css('color', '#001f7b')
+    } else {
+        el.find('.text_msg').before(' <button class="format">{}</button> ')
     }
     $messageField.prepend(el);
 }
@@ -187,6 +129,9 @@ function webSocket(url) {
 
 
 $(document).on('click', '#connect', function () {
+    if (ws) {
+        ws.close();
+    }
     webSocket();
 });
 $(document).on('keyup', '#url', function (ev) {
@@ -279,51 +224,149 @@ $(document).on('change', '#reconnect', function () {
     cfg.set('reconnect', $(this).is(":checked"));
 });
 
+
+$(document).on('click', '.format', function () {
+    let msg = this.parentNode.querySelector('.text_msg');
+    msg.innerHTML = '</br>' + formatObject(JSON.parse(msg.innerText), '&emsp;&emsp;', '</br>');
+});
+
 // var matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"));
 
 
-function res(obj, tabs) {
-    let i, ii, result = [''];
-    if (tabs === undefined) {
-        tabs = '    '
-    } else {
-        tabs = tabs + '    ';
+function Storage(nameTable) {
+    this.table = {};
+    try {
+        this.table = JSON.parse(localStorage.getItem(nameTable)) || {};
+    } catch (e) {
+        localStorage.setItem(nameTable, JSON.stringify(this.table));
     }
-    for (i in obj) {
-        ii = obj[i];
-        if (typeof ii === "object" && ii !== null) {
-            if (Array.isArray(ii)) {
-                result.push(tabs + i + ': ' + '[\n');
-            } else {
-                result.push(tabs + i + ': ' + '{\n');
+    this.set = function (name, val) {
+        if (val !== undefined) {
+            this.table[name] = nameTable + '_' + name;
+            localStorage.setItem(this.table[name], JSON.stringify(val));
+            this[name] = val;
+            try {
+                localStorage.setItem(nameTable, JSON.stringify(this.table));
+            } catch (e) {
+                console.error(e);
             }
-            result.push(res(ii, tabs)); // рекурсия
+            return this[name]
+        }
+    };
+    this.del = function (name) {
+        delete this.table[name];
+        delete this[name];
+        $.removeCookie(this.table[name]);
+        try {
+            localStorage.setItem(nameTable, JSON.stringify(this.table));
+        } catch (e) {
+            console.error(e);
+        }
+    };
 
-            if (Array.isArray(ii)) {
-                result.push(tabs + '],\n');
-            } else {
-                result.push(tabs + '},\n');
-            }
-        } else {
-            result.push(tabs + i + ': ' + ii + ',\n');
+    this.softSet = function (name, val) {
+        if (!this[name]) {
+            return this.set(name, val);
+        }
+    };
+
+    for (let _name in this.table) {
+        try {
+            this[_name] = JSON.parse(localStorage.getItem(this.table[_name]));
+        } catch (e) {
+            console.error(e);
+            delete this.table[_name];
+            localStorage.setItem(nameTable, JSON.stringify(this.table))
         }
     }
+}
+
+
+function formatObject(obj, TAB, LINE_BREAK, tabs) {
+    let result = [], decBeg, decEnd, _tabs, i, ii;
+    TAB = TAB || '\t';
+    LINE_BREAK = LINE_BREAK || '\n';
+    if (tabs === undefined) {
+        tabs = [];
+    }
+
+    if (typeof obj !== "object" || obj === null) {
+        return;
+    }
+
+    if (Array.isArray(obj)) {
+        decBeg = '[' + LINE_BREAK;
+        decEnd = '],' + LINE_BREAK;
+    } else {
+        decBeg = '{' + LINE_BREAK;
+        decEnd = '},' + LINE_BREAK;
+    }
+
+    result.push(decBeg);
+
+    tabs.push(TAB);
+    for (i in obj) {
+        ii = obj[i];
+
+        _tabs = tabs.join('');
+
+        if (Array.isArray(obj)) {
+            result.push(_tabs, i, ': ');
+        } else {
+            result.push(_tabs, '"', i, '"', ': ');
+        }
+
+        if (typeof ii === "object" && ii !== null) {
+            result.push(formatObject(ii, TAB, LINE_BREAK, tabs)); // рекурсия
+        } else {
+            if (typeof ii === "string") {
+                result.push('"', ii, '"', ',', LINE_BREAK);
+            } else {
+                ii = ii === null ? 'null' : ii === undefined ? 'undefined' : ii;
+                result.push(ii, ',', LINE_BREAK);
+            }
+        }
+    }
+    tabs.pop();
+    result.push(tabs.join(''), decEnd);
+
     return result.join('');
 }
-res({
-    "ID_msg": "x10009",
-    "Tables": [{
-        "Name": "ClientInfo",
-        "TypeParameter": "Insert",
-        "Values": [{
-            "Table": "ClientInfo",
-            "TypeParameter": "Phone",
-            "Query": "Create"
-        }, {
-            "Phone": "79097777777",
-            "Name": "TEST"
-        }]
-    }],
-    "Query": "Services",
-    "Error": null
-});
+
+
+function testExpression(con) { // for test
+    let arr = Array.prototype.slice.call(arguments, 1);
+    if (con) {
+        console.info('%c\\\\\\\\\\\\', 'color: darkgreen', con, arr.join(' '));
+        // console.dir( _con + ' ' + arr.join( ' ' ), { colors: 'green' } );
+    } else {
+        console.error('/////' + con, arr.join(' '));
+    }
+}
+
+
+// setTimeout(function () {
+//     let x = {
+//         "ID_msg": "x10009",
+//         "Tables": [{
+//             "Name": "ClientInfo",
+//             "TypeParameter": "Insert",
+//             "Values": [{
+//                 "Table": "ClientInfo",
+//                 "TypeParameter": "Phone",
+//                 "Query": "Create"
+//             }, {
+//                 "Phone": "79097777777",
+//                 "Name": "TEST"
+//             }]
+//         }],
+//         "Query": "Services",
+//         "Error": null,
+//         error: undefined,
+//         erro22r: 13213213
+//     };
+//
+//     console.log(res(x));
+// }, 1000);
+
+
