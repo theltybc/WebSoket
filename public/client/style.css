@@ -83,6 +83,7 @@ span {
     color: #000000;
     border-radius: 6px;
 }
+
 .format {
     background-color: rgba(61, 249, 0, 0.35);
     color: #000000;
@@ -91,4 +92,8 @@ span {
 
 #pattern {
     width: 30%;
+}
+
+.text_msg {
+    border: none;
 }

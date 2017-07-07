@@ -227,7 +227,13 @@ $(document).on('change', '#reconnect', function () {
 
 $(document).on('click', '.format', function () {
     let msg = this.parentNode.querySelector('.text_msg');
-    msg.innerHTML = '</br>' + formatObject(JSON.parse(msg.innerText), '&emsp;&emsp;', '</br>');
+    if (msg.dataset.text_msg) {
+        msg.innerHTML = msg.dataset.text_msg;
+        delete msg.dataset.text_msg;
+    } else {
+        msg.dataset.text_msg = msg.innerText;
+        msg.innerHTML = '</br>' + formatObject(JSON.parse(msg.innerText), '&emsp;&emsp;', '</br>');
+    }
 });
 
 // var matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"));
