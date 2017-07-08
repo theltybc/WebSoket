@@ -232,7 +232,7 @@ $(document).on('click', '.format_msg_btn', function () {
         delete msg.dataset.text_msg;
     } else {
         msg.dataset.text_msg = msg.innerText;
-        msg.innerHTML = '</br>' + formatObject(JSON.parse(msg.innerText), '&emsp;&emsp;', '</br>');
+        msg.innerHTML = '</br>' + formatObject(JSON.parse(msg.innerText), '&emsp;|&emsp;', '</br>');
     }
 });
 
@@ -349,30 +349,4 @@ function testExpression(con) { // for test
         console.error('/////' + con, arr.join(' '));
     }
 }
-
-
-// setTimeout(function () {
-//     let x = {
-//         "ID_msg": "x10009",
-//         "Tables": [{
-//             "Name": "ClientInfo",
-//             "TypeParameter": "Insert",
-//             "Values": [{
-//                 "Table": "ClientInfo",
-//                 "TypeParameter": "Phone",
-//                 "Query": "Create"
-//             }, {
-//                 "Phone": "79097777777",
-//                 "Name": "TEST"
-//             }]
-//         }],
-//         "Query": "Services",
-//         "Error": null,
-//         error: undefined,
-//         erro22r: 13213213
-//     };
-//
-//     console.log(res(x));
-// }, 1000);
-
 
