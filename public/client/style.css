@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "DejaVu Sans Mono"; /* Гарнитура шрифта */
+    src: url(dejavu-sans-mono.ttf); /* Путь к файлу со шрифтом */
+}
+
 #textarea_field {
 
 }
@@ -6,6 +11,9 @@ textarea {
     border: solid 1px black;
     width: calc(100% - 10px);
     height: 150px;
+    font-family: "DejaVu Sans Mono";
+    font-size: 14px;
+    word-break: break-all;
 }
 
 .field {
@@ -57,6 +65,8 @@ span {
 }
 
 #message {
+    font-family: "DejaVu Sans Mono";
+    font-size: 14px;
     max-height: 500px;
     border: solid 1px black;
     padding: 5px 5px 5px 5px;

@@ -105,7 +105,9 @@ function webSocket(url) {
                 console.group("%cMSG SEND::::>>>>", 'color: blue');
                 console.log(msg);
                 try {
-                    console.log(JSON.parse(msg));
+                    msg = JSON.parse(msg);
+                    console.log(msg);
+                    msg = JSON.stringify(msg)
                 } catch (e) {
                     errorParse = true;
                     console.error(e);
@@ -236,6 +238,18 @@ $(document).on('click', '.format_msg_btn', function () {
     }
 });
 
+
+$(document).on('click', '#format_textarea_btn', function () {
+    let format = $textarea.attr('format'), text = $textarea.val();
+    if (format) {
+        $textarea.val(JSON.stringify(JSON.parse(text))); // костыль
+        $textarea.removeAttr('format')
+    } else {
+        $textarea.val(formatObject(JSON.parse(text), '   ', null, true));
+        $textarea.attr('format', 'true');
+    }
+});
+
 // var matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"));
 
 
@@ -288,55 +302,70 @@ function Storage(nameTable) {
 }
 
 
-function formatObject(obj, TAB, LINE_BREAK, tabs) {
-    let result = [], decBeg, decEnd, _tabs, i, ii;
+function formatObject(obj, TAB, LINE_BREAK, withOutIndex, tabs) {
+    if (typeof obj !== "object" || obj === null) {
+        throw new TypeError('Need Object or Array',);
+    }
+
+
+    let result = [], decBeg, decEnd, _tabs, i, ii
+        , keys = Object.keys(obj), len = keys.length
+        , isArray = Array.isArray(obj);
     TAB = TAB || '\t';
     LINE_BREAK = LINE_BREAK || '\n';
     if (tabs === undefined) {
         tabs = [];
     }
 
-    if (typeof obj !== "object" || obj === null) {
-        return;
-    }
 
-    if (Array.isArray(obj)) {
+    if (isArray) {
         decBeg = '[' + LINE_BREAK;
-        decEnd = '],' + LINE_BREAK;
+        decEnd = ']';
     } else {
         decBeg = '{' + LINE_BREAK;
-        decEnd = '},' + LINE_BREAK;
+        decEnd = '}';
     }
 
-    result.push(decBeg);
+    result += decBeg;
+
 
     tabs.push(TAB);
-    for (i in obj) {
-        ii = obj[i];
+    _tabs = tabs.join('');
 
-        _tabs = tabs.join('');
 
-        if (Array.isArray(obj)) {
-            result.push(_tabs, i, ': ');
+    for (i = 0; i < len; i++) {
+        ii = obj[keys[i]];
+
+        if (isArray) {
+            result += _tabs;
+            if (!withOutIndex) {
+                result += keys[i] + ': ';
+            }
         } else {
-            result.push(_tabs, '"', i, '"', ': ');
+            result += _tabs + '"' + keys[i] + '"' + ': ';
         }
 
         if (typeof ii === "object" && ii !== null) {
-            result.push(formatObject(ii, TAB, LINE_BREAK, tabs)); // рекурсия
+            result += formatObject(ii, TAB, LINE_BREAK, withOutIndex, tabs); // рекурсия // не забываем переименовать
         } else {
             if (typeof ii === "string") {
-                result.push('"', ii, '"', ',', LINE_BREAK);
+                result += '"' + ii + '"';
             } else {
                 ii = ii === null ? 'null' : ii === undefined ? 'undefined' : ii;
-                result.push(ii, ',', LINE_BREAK);
+                result += ii;
             }
         }
-    }
-    tabs.pop();
-    result.push(tabs.join(''), decEnd);
 
-    return result.join('');
+        if (i < len - 1) {
+            result += ',';
+        }
+        result += LINE_BREAK;
+    }
+
+    tabs.pop();
+    result += tabs.join('') + decEnd;
+
+    return result;
 }
 
 
