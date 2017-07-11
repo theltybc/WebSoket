@@ -1,3 +1,5 @@
+'use strict';
+
 $(document).on('click', '#connect', function () {
     if (ws) {
         ws.close();
