@@ -216,72 +216,78 @@ function Storage(nameTable) {
 }
 
 
-function formatObject(obj, TAB, LINE_BREAK, withOutIndex, tabs) {
+function objectToString(obj, TAB, LINE_BREAK, withoutIndex, tabs) {
     if (typeof obj !== "object" || obj === null) {
         throw new TypeError('Need Object or Array',);
     }
 
 
-    let result = [], decBeg, decEnd, _tabs, i, ii
-        , keys = Object.keys(obj), len = keys.length
-        , isArray = Array.isArray(obj);
     TAB = TAB || '\t';
     LINE_BREAK = LINE_BREAK || '\n';
-    if (tabs === undefined) {
-        tabs = [];
-    }
 
+    tabs = tabs || [];
 
-    if (isArray) {
-        decBeg = '[' + LINE_BREAK;
-        decEnd = ']';
-    } else {
-        decBeg = '{' + LINE_BREAK;
-        decEnd = '}';
-    }
+    return form(obj, tabs);
 
-    result += decBeg;
-
-
-    tabs.push(TAB);
-    _tabs = tabs.join('');
-
-
-    for (i = 0; i < len; i++) {
-        ii = obj[keys[i]];
-
+    function form(obj, tabs) {
+        let _tabs, i, ii
+            , result = ''
+            , decBeg, decEnd
+            , isArray = Array.isArray(obj)
+            , keys = Object.keys(obj), len = keys.length
+        ;
         if (isArray) {
-            result += _tabs;
-            if (!withOutIndex) {
-                result += keys[i] + ': ';
-            }
+            decBeg = '[' + LINE_BREAK;
+            decEnd = ']';
         } else {
-            result += _tabs + '"' + keys[i] + '"' + ': ';
+            decBeg = '{' + LINE_BREAK;
+            decEnd = '}';
         }
 
-        if (typeof ii === "object" && ii !== null) {
-            result += formatObject(ii, TAB, LINE_BREAK, withOutIndex, tabs); // рекурсия // не забываем переименовать
-        } else {
-            if (typeof ii === "string") {
-                result += '"' + ii + '"';
+        result += decBeg;
+
+
+        tabs.push(TAB);
+        _tabs = tabs.join('');
+
+
+        for (i = 0; i < len; i++) {
+            ii = obj[keys[i]];
+
+            if (isArray) {
+                result += _tabs;
+                if (!withoutIndex) {
+                    result += keys[i] + ': ';
+                }
             } else {
-                ii = ii === null ? 'null' : ii === undefined ? 'undefined' : ii;
-                result += ii;
+                result += _tabs + '"' + keys[i] + '"' + ': ';
             }
+
+            if (typeof ii === "object" && ii !== null) {
+                result += form(ii, tabs); // рекурсия // не забываем переименовать
+            } else {
+                if (typeof ii === "string") {
+                    result += '"' + ii + '"';
+                } else {
+                    ii = ii === null ? 'null' : ii === undefined ? 'undefined' : ii;
+                    result += ii;
+                }
+            }
+
+            if (i < len - 1) {
+                result += ',';
+            }
+            result += LINE_BREAK;
         }
 
-        if (i < len - 1) {
-            result += ',';
-        }
-        result += LINE_BREAK;
+        tabs.pop();
+        result += tabs.join('') + decEnd;
+
+        return result;
     }
-
-    tabs.pop();
-    result += tabs.join('') + decEnd;
-
-    return result;
 }
 
+// console.log(objectToString({sadf: 10, asdfas: [{asdf: 1555}]}));
 
 function testExpression(con) { // for test
     let arr = Array.prototype.slice.call(arguments, 1);

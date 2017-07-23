@@ -21,7 +21,9 @@ $(document).on('click', '#save_url', function () {
 
 
 $(document).on('click', '#send', function () {
-    ws.send();
+    if (ws !== undefined) {
+        ws.send();
+    }
 });
 
 
@@ -89,7 +91,7 @@ $(document).on('click', '.format_msg_btn', function () {
         delete msg.dataset.text_msg;
     } else {
         msg.dataset.text_msg = msg.innerText;
-        msg.innerHTML = '</br>' + formatObject(JSON.parse(msg.innerText), '&emsp;|&emsp;', '</br>');
+        msg.innerHTML = '</br>' + objectToString(JSON.parse(msg.innerText), '&emsp;|&emsp;', '</br>');
     }
 });
 
@@ -97,7 +99,7 @@ $(document).on('click', '.format_msg_btn', function () {
 $(document).on('click', '#format_textarea_btn', function () {
     let format = $textarea.attr('format'), text = $textarea.val();
     if (format === undefined) {
-        $textarea.val(formatObject(JSON.parse(text), '   ', null, true));
+        $textarea.val(objectToString(JSON.parse(text), '   ', null, true));
         $textarea.attr('format', '');
     } else {
         $textarea.val(JSON.stringify(JSON.parse(text))); // костыль
