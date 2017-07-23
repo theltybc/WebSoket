@@ -18,11 +18,6 @@ $(document).on('click', '#save_url', function () {
 });
 
 
-$(document).on('keyup', '#textarea', function (ev) {
-    if (ev.keyCode === 13) {
-        ws.send();
-    }
-});
 $(document).on('click', '#send', function () {
     ws.send();
 });
@@ -35,7 +30,7 @@ $(document).on('click', '#save_pattern', function () {
     }
     storagePattern.set(name, text);
     if (notExist) {
-        appendPattern(name)
+        appendPattern('', name)
     }
     $patternName.val('');
     $pattern.val(name)
@@ -91,11 +86,11 @@ $(document).on('click', '.format_msg_btn', function () {
 
 $(document).on('click', '#format_textarea_btn', function () {
     let format = $textarea.attr('format'), text = $textarea.val();
-    if (format) {
+    if (format === undefined) {
+        $textarea.val(formatObject(JSON.parse(text), '   ', null, true));
+        $textarea.attr('format', '');
+    } else {
         $textarea.val(JSON.stringify(JSON.parse(text))); // костыль
         $textarea.removeAttr('format')
-    } else {
-        $textarea.val(formatObject(JSON.parse(text), '   ', null, true));
-        $textarea.attr('format', 'true');
     }
 });
