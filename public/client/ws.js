@@ -93,7 +93,7 @@ function webSocket(url) {
         cfg.set('connectOpen', true);
         ws.send = (function (x) {
             return function (msg) {
-                if (ws.readyState !== 1) {
+                if (ws !== undefined && ws.readyState !== 1) {
                     showMsg('send', 'Не подключенны', true, false);
                     return;
                 }

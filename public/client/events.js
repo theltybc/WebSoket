@@ -65,6 +65,14 @@ $(document).on('click', '.del', function () {
 $(document).on('click', '#auto_msg_save', function () {
     storage.set('autoMsg', $autoMsg.val())
 });
+$(document).on('keyup', '#auto_msg', function (ev) {
+    if (ev.keyCode === 13) {
+        let msg = $autoMsg.val();
+        if (msg !== '') {
+            ws.send(msg);
+        }
+    }
+});
 
 
 $(document).on('change', '#reconnect', function () {
