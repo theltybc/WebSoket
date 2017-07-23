@@ -1,3 +1,5 @@
+'use strict';
+
 let storage = new Storage('storageTable')
     , storagePattern = new Storage('storagePatternTable')
     , cfg = new Storage('cfgTable')
