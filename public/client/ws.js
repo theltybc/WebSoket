@@ -4,7 +4,7 @@ let storage = new Storage('storageTable')
     , storagePattern = new Storage('storagePatternTable')
     , cfg = new Storage('cfgTable')
     , ws
-;
+    ;
 const TIMEOUT_RECONNECT = 500
     , $url = $('#url')
     , $reconnect = $("#reconnect")
@@ -15,7 +15,7 @@ const TIMEOUT_RECONNECT = 500
     , $messageField = $('#message_field')
     , $msgFieldMaxHeight = $('#msg_field_max_height')
     , msgFieldHeightLimit = 2000
-;
+    ;
 // '{"HashAuth":"1bcb953ddc497d3dfb81afa61f6d67a0b78aa4c7797329a5e9b6bac57aae32ad"}'
 // $url.val("ws://37.46.134.23:8080/ws" );
 
@@ -38,6 +38,9 @@ const TIMEOUT_RECONNECT = 500
     if (cfg.msgFieldHeight) {
         $msgFieldMaxHeight.val(cfg.msgFieldHeight);
         changeSize();
+    }
+    if (cfg.textArea){
+        $textarea.val(cfg.textArea)
     }
 })();
 
@@ -235,7 +238,7 @@ function objectToString(obj, TAB, LINE_BREAK, withoutIndex, tabs) {
             , decBeg, decEnd
             , isArray = Array.isArray(obj)
             , keys = Object.keys(obj), len = keys.length
-        ;
+            ;
         if (isArray) {
             decBeg = '[' + LINE_BREAK;
             decEnd = ']';
