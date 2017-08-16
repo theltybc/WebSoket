@@ -299,3 +299,74 @@ function testExpression(con) { // for test
     }
 }
 
+
+function avg(arr) {
+    let x = 0, i;
+    for (i = 0; i < arr.length; i++) {
+        x += arr[i];
+    }
+    return x / arr.length;
+}
+
+function percentDifferent(a, b) {
+    return (b / (a / 100));
+}
+
+function fNumber(number) {
+    return (number + '').replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+}
+
+function testTimeExpression(iteration, iteration1, fn, arg) {
+    /**
+     * iteration, iteration1 - количество итераций
+     * fn - функции для проверки ю массив или обект, ключи выводятся в результат
+     * arg - аргумиенты для функций
+     *
+     *
+     * пробегается по функциям и выаполняет их заданное количество раз (в 2х циклах).
+     *
+     * процентное соотношение выводится по отношению к первому результату.
+     *
+     * при выполнении в главном цикле, каждый раз, порядок выполнения меняется - keysFn.reverse()
+     * для этого итерация происходит по ключам - keysFn = Object.keys(fn).
+     */
+    let t, time = {}, average = [], keysFn = Object.keys(fn);
+
+    setTimeout(run, 500);
+
+    function test(fn, arg) {
+        t = new Date();
+        for (let j = 0; j < iteration1; j++) {
+            fn(arg)
+        }
+        return new Date - t;
+    }
+
+    function run() {
+        for (let k in fn) {
+            time[k] = [];
+        }
+
+        console.time('overall');
+        for (let i = 0; i < iteration; i++) {
+            for (let k = 0; k < keysFn.length; k++) {
+                time[keysFn[k]].push(test(fn[keysFn[k]], arg));
+            }
+            keysFn.reverse();
+        }
+        console.timeEnd('overall');
+
+        console.log('overall iteration for each = ' + fNumber(iteration * iteration1));
+        for (let k = 0; k < keysFn.length; k++) {
+            average[keysFn[k]] = avg(time[keysFn[k]]);
+            console.log('average time', ('"' + fn[keysFn[k]].name || '') + '"', keysFn[k], average[keysFn[k]], 'ms');
+            if (k > 0) {
+                average.procent = percentDifferent(average[keysFn[0]], average[keysFn[k]]);
+                console.log(average.procent + '%')
+            }
+        }
+    }
+
+    return average;
+}
+
