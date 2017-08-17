@@ -1,5 +1,11 @@
 'use strict';
 
+
+window.addEventListener('beforeunload', function () {
+    cfg.set('textArea', $textarea.val());
+}, false);
+
+
 $(document).on('click', '#connect', function () {
     if (ws) {
         ws.close();

@@ -31,7 +31,9 @@ const TIMEOUT_RECONNECT = 500
     if (cfg.connectOpen) {
         webSocket();
     }
-    if (cfg.selectPattern) {
+    if (cfg.textArea) {
+        $textarea.val(cfg.textArea)
+    } else if (cfg.selectPattern) {
         $pattern.val(cfg.selectPattern);
         changePattern();
     }
