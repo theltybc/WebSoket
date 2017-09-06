@@ -44,6 +44,14 @@ const TIMEOUT_RECONNECT = 500
 })();
 
 
+Object.prototype[Symbol.iterator] = function* () {
+    let keys = Object.keys(this);
+    for (let key = 0; key < keys.length; key++) {
+        yield this[keys[key]];
+    }
+};
+
+
 function appendPattern(_, name) {
     $pattern.append('<option value="' + name + '">' + name + '</option>');
 }
