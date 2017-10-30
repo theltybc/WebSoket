@@ -22,7 +22,8 @@ $(document).on('click', '#disconnect', function () {
     ws.close();
 });
 $(document).on('click', '#save_url', function () {
-    storage.set('url', $url.val())
+    storage.set('url', $url.val());
+    storage.set('protocol', $protocol.val());
 });
 
 
@@ -90,7 +91,7 @@ $(document).on('change', '#reconnect', function () {
 });
 
 
-$(document).on('click', '.format_msg_btn', function () {
+$(document).on('click', '.format_msg_btn', function () { // fixme: говнокод
     let msg = this.parentNode.querySelector('.text_msg');
     if (msg.dataset.text_msg) {
         msg.innerHTML = msg.dataset.text_msg;
