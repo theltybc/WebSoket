@@ -2,7 +2,7 @@
 
 
 window.addEventListener('beforeunload', function () {
-    cfg.set('textArea', $textarea.val());
+    cfg.set('textArea', $requestText.val());
 }, false);
 
 
@@ -35,7 +35,7 @@ $(document).on('click', '#send', function () {
 
 
 $(document).on('click', '#save_pattern', function () {
-    let name = $patternName.val(), text = $textarea.val(), notExist = !storagePattern[name];
+    let name = $patternName.val(), text = $requestText.val(), notExist = !storagePattern[name];
     if (name === '' || text === '') {
         return;
     }
@@ -58,7 +58,7 @@ $(document).on('change', '#pattern', changePattern);
 
 
 $(document).on('click', '#clear_textarea', function () {
-    $textarea.val('');
+    $requestText.val('');
 });
 
 
@@ -104,12 +104,12 @@ $(document).on('click', '.format_msg_btn', function () { // fixme: говнок�
 
 
 $(document).on('click', '#format_textarea_btn', function () {
-    let format = $textarea.attr('format'), text = $textarea.val();
+    let format = $requestText.attr('format'), text = $requestText.val();
     if (format === undefined) {
-        $textarea.val(objectToString(JSON.parse(text), '   ', null, true));
-        $textarea.attr('format', '');
+        $requestText.val(objectToString(JSON.parse(text), '   ', null, true));
+        $requestText.attr('format', '');
     } else {
-        $textarea.val(JSON.stringify(JSON.parse(text))); // костыль
-        $textarea.removeAttr('format')
+        $requestText.val(JSON.stringify(JSON.parse(text))); // костыль
+        $requestText.removeAttr('format')
     }
 });

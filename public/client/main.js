@@ -10,7 +10,7 @@ const TIMEOUT_RECONNECT = 500
     , $url = $('#url')
     , $protocol = $('#protocol')
     , $reconnect = $("#reconnect")
-    , $textarea = $('#textarea')
+    , $requestText = $('#request_text')
     , $autoMsg = $('#auto_msg')
     , $pattern = $('#pattern')
     , $patternName = $('#pattern_name')
@@ -40,7 +40,7 @@ function init() {
         webSocket();
     }
     if (cfg.textArea) {
-        $textarea.val(cfg.textArea)
+        $requestText.val(cfg.textArea)
     } else if (cfg.selectPattern) {
         $pattern.val(cfg.selectPattern);
         changePattern();

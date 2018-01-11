@@ -38,7 +38,7 @@ function changePattern() {
     if (val === 'empty') {
         return false;
     }
-    $textarea.val(storagePattern[val]);
+    $requestText.val(storagePattern[val]);
     return false;
 }
 

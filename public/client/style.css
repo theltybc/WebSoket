@@ -3,29 +3,45 @@
     src: url(dejavu-sans-mono.ttf); /* Путь к файлу со шрифтом */
 }
 
-#textarea_field {
-
+.panel {
+    border: solid 1px black;
+    padding: 5px 5px 5px 5px;
 }
 
-textarea {
-    border: solid 1px black;
-    width: calc(100% - 10px);
-    height: 150px;
+.panel.absolute {
+    position: absolute;
+    width: calc(50% - 21px);
+    margin: 10px;
+    height: calc(100% - 74px);
+    max-height: calc(100% - 74px);
+}
+
+.panel.right {
+    right: -1px;
+}
+
+.panel.left {
+    left: -1px;
+}
+
+#request_text {
+    position: relative;
+    width: calc(100% - 6px);
+    max-width: calc(100% - 6px);
+    height: calc(100% - 30px);
+    max-height: calc(100% - 30px);
+    /*height: 200px;*/
     font-family: "DejaVu Sans Mono";
-    font-size: 14px;
     word-break: break-all;
 }
 
-.field {
-    border: solid 1px black;
-    padding: 5px 5px 5px 5px;
-    margin-bottom: 5px;
+#container_request_text {
+    height: calc(100% - 47px);
+    max-height: calc(100% - 47px);
 }
 
-span {
-    padding-right: 5px;
-    padding-left: 2px;
-    border-right: solid 1px black;
+.option_request_text {
+    margin-bottom: 5px;
 }
 
 #connect {
@@ -74,6 +90,8 @@ span {
 
 #_message_field {
     overflow-y: scroll;
+    height: calc(100% - 21px);
+    max-height: calc(100% - 21px);
 }
 
 #max_height {
