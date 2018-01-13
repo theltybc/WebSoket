@@ -91,7 +91,7 @@ $(document).on('change', '#reconnect', function () {
 });
 
 
-$(document).on('click', '.format_msg_btn', function () { // fixme: говнокод
+$(document).on('click', '.format_msg_btn', function () {
     let msg = this.parentNode.querySelector('.text_msg');
     if (msg.dataset.text_msg) {
         msg.innerHTML = msg.dataset.text_msg;
@@ -104,12 +104,12 @@ $(document).on('click', '.format_msg_btn', function () { // fixme: говнок�
 
 
 $(document).on('click', '#format_textarea_btn', function () {
-    let format = $requestText.attr('format'), text = $requestText.val();
-    if (format === undefined) {
-        $requestText.val(objectToString(JSON.parse(text), '   ', null, true));
-        $requestText.attr('format', '');
+    let text = $requestText.val()
+        , nonFormatted = JSON.stringify(JSON.parse(text))
+    ;
+    if (nonFormatted.length < text.length) {
+        $requestText.val(nonFormatted);
     } else {
-        $requestText.val(JSON.stringify(JSON.parse(text))); // костыль
-        $requestText.removeAttr('format')
+        $requestText.val(objectToString(JSON.parse(text), '   ', null, true));
     }
 });
