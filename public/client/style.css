@@ -80,14 +80,6 @@
     word-break: break-all;
 }
 
-#message {
-    font-family: "DejaVu Sans Mono";
-    font-size: 14px;
-    max-height: 500px;
-    border: solid 1px black;
-    padding: 5px 5px 5px 5px;
-}
-
 #_message_field {
     overflow-y: scroll;
     height: calc(100% - 21px);
@@ -124,4 +116,6 @@
 
 .text_msg {
     border: none;
+    font-family: "DejaVu Sans Mono";
+    font-size: 14px;
 }
